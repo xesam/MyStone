@@ -1,3 +1,3 @@
-#Stone
-《两周自制脚本语言》
+# Stone
 
+Stone 读书笔记
