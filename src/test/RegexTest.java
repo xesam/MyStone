@@ -1,5 +1,6 @@
 package test;
 
+import dev.xesam.stone.Lexer;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -12,7 +13,7 @@ import java.util.regex.Pattern;
 public class RegexTest {
 
     //[0-9]+
-    public static final String PATTERN_NUMBER = "^[0-9]+$";
+    public static final String PATTERN_NUMBER = Lexer.PATTERN_NUMBER;
 
     @Test
     public void test1() {
@@ -42,46 +43,40 @@ public class RegexTest {
      * "abc\ -> "\"abc\\" -> "\"abc\\\\"
      * "a[LF]bc\ -> "\"a\nbc\\" -> "\"a\\nbc\\\\"
      */
-    public static final String PATTERN_STRING = "^([a-zA-Z]|[^\"]|\"|\\n|\\\\)+$";
+    public static final String PATTERN_STRING = Lexer.PATTERN_STRING;
 
     @Test
     public void test4() {
         Pattern pattern = Pattern.compile(PATTERN_STRING);
-        Matcher matcher = pattern.matcher("abc");
+        Matcher matcher = pattern.matcher("\"abc\"");
         Assert.assertTrue(matcher.find());
     }
 
     @Test
     public void test5() {
         Pattern pattern = Pattern.compile(PATTERN_STRING);
-        Matcher matcher = pattern.matcher("'abc");
+        Matcher matcher = pattern.matcher("\"'abc\"");
         Assert.assertTrue(matcher.find());
     }
 
     @Test
     public void test6() {
         Pattern pattern = Pattern.compile(PATTERN_STRING);
-        Matcher matcher = pattern.matcher("\"'abc");
+        Matcher matcher = pattern.matcher("\"\\\"'abc\"");
         Assert.assertTrue(matcher.find());
     }
 
     @Test
     public void test7() {
         Pattern pattern = Pattern.compile(PATTERN_STRING);
-        Matcher matcher = pattern.matcher("\\\"'abc");
+        Matcher matcher = pattern.matcher("\"\\\\\\\"'abc\"");
         Assert.assertTrue(matcher.find());
     }
 
     @Test
     public void test8() {
         Pattern pattern = Pattern.compile(PATTERN_STRING);
-        Matcher matcher = pattern.matcher("|\\\"'abc");
+        Matcher matcher = pattern.matcher("\"|\\\\\\\"'abc\"");
         Assert.assertTrue(matcher.find());
-    }
-
-    @Test
-    public void test9() {
-        Assert.assertTrue(Pattern.compile("\"").matcher("\"").find());
-        Assert.assertTrue(Pattern.compile("\\\\").matcher("\\").find());
     }
 }

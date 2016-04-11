@@ -26,7 +26,6 @@ public class Token {
         return false;
     }
 
-
     public boolean isString() {
         return false;
     }
