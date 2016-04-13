@@ -9,7 +9,7 @@ import java.util.stream.IntStream;
  */
 public class Lexer {
 
-    // 整型字面量
+    // 注释
     // //.*
     public static final String PATTERN_COMMENT = "(//.*)";
 
@@ -22,11 +22,13 @@ public class Lexer {
     public static final String PATTERN_IDENTIFIER = "([a-z_A-Z][a-z_A-Z0-9]*|==|<=|>=|\\|\\||\\p{Punct})?";
 
     // 字符串
-    // 标准形式： "(\"|\\\\|\\n|[^\"])*"
-    // 使用 java 表达，需要转义：\"(\\\"|\\\\\\\\|\\\\n|[^\"])*\"
+    // 原始文本，不是 java 字符串： "a\\b\"c\nd"
+    // java 字符串表示： "\"a\\\\b\\\"c\\nd\""
+    // 不是转义字符的都可以直接用过来。
+    // 正则字符串："\"\\\\\\\\b\\\\\"c\\\\nd\""
     public static final String PATTERN_STRING = "(\"(\\\\\"|\\\\\\\\|\\\\n|[^\"])*\")";
 
-    public static final String regexPat = "\\s*(" + PATTERN_COMMENT + "|" + PATTERN_NUMBER + "|" + PATTERN_IDENTIFIER + "|" + PATTERN_STRING + ")?";
+    public static final String REGEX_PATTERN = "\\s*(" + PATTERN_COMMENT + "|" + PATTERN_NUMBER + "|" + PATTERN_IDENTIFIER + "|" + PATTERN_STRING + ")?";
 
     public Token read() {
         return null;
@@ -37,13 +39,27 @@ public class Lexer {
     }
 
     public static void main(String[] args) {
-        System.out.println(regexPat);
-        Pattern pattern = Pattern.compile(regexPat);
-        Matcher matcher = pattern.matcher("a = \"abdc\"");
-        System.out.println(matcher.find());
-        IntStream.range(0, matcher.groupCount()).forEach((i) -> {
-            String group = matcher.group(i);
-            System.out.println(group);
-        });
+//        System.out.println(PATTERN_COMMENT);
+//        System.out.println(PATTERN_NUMBER);
+//        System.out.println(PATTERN_IDENTIFIER);
+//        System.out.println(PATTERN_STRING);
+//        System.out.println(REGEX_PATTERN);
+
+        Pattern pattern = Pattern.compile(REGEX_PATTERN);
+        String content = "a = \"abdc\"";
+        Matcher matcher = pattern.matcher(content);
+
+        int start = 0;
+        while (matcher.find(start)) {
+            System.out.println("groupCount():" + matcher.groupCount());
+            IntStream.range(0, matcher.groupCount()).forEach(i -> {
+                System.out.println("group(" + i + "):" + matcher.group(i));
+            });
+
+            start = matcher.end();
+            if (start >= content.length()) {
+                break;
+            }
+        }
     }
 }
