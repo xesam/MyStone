@@ -79,4 +79,11 @@ public class RegexTest {
         Matcher matcher = pattern.matcher("\"|\\\\\\\"'abc\"");
         Assert.assertTrue(matcher.find());
     }
+
+    @Test
+    public void test9() {
+        Pattern pattern = Pattern.compile(PATTERN_STRING);
+        Matcher matcher = pattern.matcher("\"\\n\"");
+        Assert.assertTrue(matcher.find());
+    }
 }
