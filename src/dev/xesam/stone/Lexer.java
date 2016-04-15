@@ -1,7 +1,10 @@
 package dev.xesam.stone;
 
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,6 +31,7 @@ public class Lexer {
     // \ 才需要转义
     // 正则字符串："\"\\\\\\\\b\\\\\"c\\\\nd\""
     public static final String PATTERN_STRING = "(\"(\\\\\"|\\\\\\\\|\\\\n|[^\"])*\")";
+//    public static final String PATTERN_STRING = "(\"(?:\\\\\"|\\\\\\\\|\\\\n|[^\"])*\")";//个人感觉用这个更好，把内部的分组取消掉，因为并没有任何用处。
 
     /**
      * 注意先后顺序 \p{Punct} 是会匹配双引号的。
@@ -42,33 +46,68 @@ public class Lexer {
     public static Pattern REGEX = Pattern.compile(REGEX_PATTERN);
 
     private LineNumberReader reader;
+    private List<Token> tokens = new ArrayList<>();
 
     public Lexer(Reader reader) {
         this.reader = new LineNumberReader(reader);
     }
 
-    public Token read() {
-        return null;
+    public Token read() throws ParseException {
+        if (fillQueue(0)) {
+            return tokens.remove(0);
+        } else {
+            return Token.EOF;
+        }
     }
 
-    public Token peek(int i) {
-        return null;
+    public Token peek(int i) throws ParseException {
+        if (fillQueue(i)) {
+            return tokens.get(i);
+        } else {
+            return Token.EOF;
+        }
     }
 
-    private boolean hasMore = false;
+    private boolean fillQueue(int size) throws ParseException {
+        while (size >= tokens.size()) {
+            if (hasMore) {
+                readLine();
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
 
-    private void addToken(int lineNo, Matcher matcher) {
+    private boolean hasMore = true;//默认是有内容的
+
+    private void addToken(int lineNumber, Matcher matcher) {
         String m = matcher.group(1);
-        System.out.println(m);
+        if (m != null) {
+            if (matcher.group(2) == null) {//不是注释
+                if (matcher.group(3) != null) {//number
+                    tokens.add(new NumberToken(lineNumber, Integer.parseInt(matcher.group(3))));
+                } else if (matcher.group(4) != null) {
+                    tokens.add(new StringToken(lineNumber, matcher.group(4)));
+                } else {
+                    tokens.add(new IdToken(lineNumber, m));
+                }
+            }
+        }
     }
 
-    public void readLine() throws IOException {
-        String line = reader.readLine();
+    public void readLine() throws ParseException {
+        String line = null;
+        try {
+            line = reader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (line == null) {
             hasMore = false;
             return;
         }
-        int lineNo = reader.getLineNumber();
+        int lineNumber = reader.getLineNumber();
         Matcher matcher = REGEX.matcher(line);
         matcher.useTransparentBounds(true).useAnchoringBounds(false);
         int pos = 0;
@@ -76,10 +115,10 @@ public class Lexer {
         while (pos < endPos) {
             matcher.region(pos, endPos);
             if (matcher.lookingAt()) {
-                addToken(lineNo, matcher);
+                addToken(lineNumber, matcher);
                 pos = matcher.end();
             } else {
-                throw new IOException("");
+                throw new ParseException("bad token at line" + lineNumber);
             }
         }
     }

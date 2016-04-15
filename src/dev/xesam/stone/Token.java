@@ -17,10 +17,13 @@ public class Token {
         return lineNumber;
     }
 
+    public String getText() {
+        return null;
+    }
+
     public boolean isIdentifier() {
         return false;
     }
-
 
     public boolean isNumber() {
         return false;
@@ -29,6 +32,5 @@ public class Token {
     public boolean isString() {
         return false;
     }
-
 
 }

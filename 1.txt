@@ -1,0 +1,5 @@
+while i < 101{
+    sum = sun + 1
+    i = i + 1
+}
+sum
