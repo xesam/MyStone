@@ -4,8 +4,8 @@ package dev.xesam.stone;
  * Created by xe on 16-2-28.
  */
 public class Token {
-    public static final Token EOF = new Token(-1);//文件结尾
-    public static final String EOL = "\\n";//行结尾
+    public static final Token EOF = new Token(-1);
+    public static final String EOL = "\\n";
 
     private int lineNumber;
 

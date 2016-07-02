@@ -13,28 +13,28 @@ import java.util.regex.Pattern;
  */
 public class Lexer {
 
-    // ×¢ÊÍ
+    // æ³¨é‡Š
     // //.*
     public static final String PATTERN_COMMENT = "(//.*)";
 
-    // ÕûĞÍ×ÖÃæÁ¿
+    // æ•´å‹å­—é¢é‡
     // [0-9]+
     public static final String PATTERN_NUMBER = "([0-9]+)";
 
-    // ±êÊ¶·û
+    // æ ‡è¯†ç¬¦
     // [a-z_A-Z][a-z_A-Z0-9]*  ==   <=   >=  ||  &&   \p{Punct}
     public static final String PATTERN_IDENTIFIER = "[a-z_A-Z][a-z_A-Z0-9]*|==|<=|>=|\\|\\||\\p{Punct}?";
 
-    // ×Ö·û´®
-    // Ô­Ê¼ÎÄ±¾£¬²»ÊÇ java ×Ö·û´®£º "a\\b\"c\nd"
-    // java ×Ö·û´®±íÊ¾£º "\"a\\\\b\\\"c\\nd\""
-    // \ ²ÅĞèÒª×ªÒå
-    // ÕıÔò×Ö·û´®£º"\"\\\\\\\\b\\\\\"c\\\\nd\""
+    // å­—ç¬¦ä¸²
+    // åŸå§‹æ–‡æœ¬ï¼Œä¸æ˜¯ java å­—ç¬¦ä¸²ï¼š "a\\b\"c\nd"
+    // java å­—ç¬¦ä¸²è¡¨ç¤ºï¼š "\"a\\\\b\\\"c\\nd\""
+    // \ æ‰éœ€è¦è½¬ä¹‰
+    // æ­£åˆ™å­—ç¬¦ä¸²ï¼š"\"\\\\\\\\b\\\\\"c\\\\nd\""
     public static final String PATTERN_STRING = "(\"(\\\\\"|\\\\\\\\|\\\\n|[^\"])*\")";
-//    public static final String PATTERN_STRING = "(\"(?:\\\\\"|\\\\\\\\|\\\\n|[^\"])*\")";//¸öÈË¸Ğ¾õÓÃÕâ¸ö¸üºÃ£¬°ÑÄÚ²¿µÄ·Ö×éÈ¡Ïûµô£¬ÒòÎª²¢Ã»ÓĞÈÎºÎÓÃ´¦¡£
+//    public static final String PATTERN_STRING = "(\"(?:\\\\\"|\\\\\\\\|\\\\n|[^\"])*\")";//ä¸ªäººæ„Ÿè§‰ç”¨è¿™ä¸ªæ›´å¥½ï¼ŒæŠŠå†…éƒ¨çš„åˆ†ç»„å–æ¶ˆæ‰ï¼Œå› ä¸ºå¹¶æ²¡æœ‰ä»»ä½•ç”¨å¤„ã€‚
 
     /**
-     * ×¢ÒâÏÈºóË³Ğò \p{Punct} ÊÇ»áÆ¥ÅäË«ÒıºÅµÄ¡£
+     * æ³¨æ„å…ˆåé¡ºåº \p{Punct} æ˜¯ä¼šåŒ¹é…åŒå¼•å·çš„ã€‚
      */
     public static final String REGEX_PATTERN = "\\s*("
             + PATTERN_COMMENT
@@ -79,12 +79,12 @@ public class Lexer {
         return true;
     }
 
-    private boolean hasMore = true;//Ä¬ÈÏÊÇÓĞÄÚÈİµÄ
+    private boolean hasMore = true;//Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İµï¿½
 
     private void addToken(int lineNumber, Matcher matcher) {
         String m = matcher.group(1);
         if (m != null) {
-            if (matcher.group(2) == null) {//²»ÊÇ×¢ÊÍ
+            if (matcher.group(2) == null) {//ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½
                 if (matcher.group(3) != null) {//number
                     tokens.add(new NumberToken(lineNumber, Integer.parseInt(matcher.group(3))));
                 } else if (matcher.group(4) != null) {
